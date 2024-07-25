@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using DG.Tweening;
+
 public class PlayerController : MonoBehaviour, IPlayerController
 {
     public static PlayerController instance;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private TrailRenderer _dashTrail;
     private GameObject _shadownPlayer;
     private Animator _playerAnimator;
+
     private void Awake()
     {
         instance = this;
@@ -106,7 +108,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
         // Hit a Ceiling
         if (ceilingHit) _frameVelocity.y = Mathf.Min(0, _frameVelocity.y);
-       // Debug.Log(groundHit);
+        // Debug.Log(groundHit);
         // Landed on the Ground
         if (!_grounded && groundHit)
         {
@@ -127,6 +129,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
         Physics2D.queriesStartInColliders = _cachedQueryStartInColliders;
     }
+
     void OnDrawGizmos()
     {
         if (_col == null || _stats == null)
@@ -154,6 +157,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     #endregion
 
     #region Jumping
+
     private bool _jumpToConsume;
     private float _jumpsToConsume;
     private bool _bufferedJumpUsable;
@@ -191,6 +195,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         _frameVelocity.y = _stats.JumpPower;
         Jumped?.Invoke();
     }
+
     #endregion
 
     #region Horizontal
@@ -211,9 +216,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
             if (_grounded)
                 _playerAnimator.CrossFade("Run Animation", 0);
         }
-
-
     }
+
     private void LookingAtDirection()
     {
         if (_frameInput.Move.x == -1)
@@ -244,15 +248,18 @@ public class PlayerController : MonoBehaviour, IPlayerController
     #endregion
 
     #region Dashing
+
     private bool _dashToConsume;
     private float _timeLastDash = float.MinValue;
     private float _dashingTime;
+
     private void HadleDash()
     {
         if (_dashToConsume && _time > _timeLastDash + _stats.DashCooldown)
             StartCoroutine(ExecuteDash());
         _dashToConsume = false;
     }
+
     private IEnumerator ExecuteDash()
     {
         _dashTrail.emitting = true;
@@ -262,14 +269,17 @@ public class PlayerController : MonoBehaviour, IPlayerController
         _dashTrail.emitting = false;
         _dashToConsume = false;
     }
+
     #endregion
 
     #region BackTime
+
     private float _backTimeCoolDown;
     private float _fullBackTimeCoolDown;
     private bool _canCountCoolDown = true;
     private bool _backTimeToConsume;
     private bool _backTimeActive;
+
     private void HandleBackTime()
     {
         _fullBackTimeCoolDown = _stats.FullBackTimeCooldown;
@@ -291,6 +301,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         }
         _backTimeToConsume = false;
     }
+
     private void ExecuteBackTime()
     {
         _backTimeCoolDown = 0;
@@ -301,18 +312,25 @@ public class PlayerController : MonoBehaviour, IPlayerController
         _canCountCoolDown = true;
         _backTimeToConsume = false;
     }
+
     #endregion
+
     #region CombatPlayer
+
     [SerializeField]
     private Material damageMaterial;
-    public void ReceiveDamage()
+
+    public void ReceiveDamage(Vector3 knockUp)
     {
-        //show GameOver
+        _knockbackForce = knockUp * 2; // Ajuste a força conforme necessário
+        _knockbackDuration = 0.5f; // Duração do knockback em segundos
+        _knockbackTimer = _knockbackDuration;
+
         _playerAnimator.CrossFade("Fall Animation", 0);
         StartCoroutine(ChangeSpriteMaterial());
-        //sprite pisca em branco e vai pra cima 
-
+        Debug.Log("Recebendo dano e aplicando knockback: " + _knockbackForce);
     }
+
     private IEnumerator ChangeSpriteMaterial()
     {
         Material newMaterial = _playerSprite.GetComponent<SpriteRenderer>().material;
@@ -320,22 +338,38 @@ public class PlayerController : MonoBehaviour, IPlayerController
         transform.DOJump(new Vector3(transform.position.x, transform.position.y + 0.4f, transform.position.z), 3, 1, 3);
         _playerSprite.GetComponent<SpriteRenderer>().material = damageMaterial;
         yield return new WaitForSeconds(2f);
-        _rb.isKinematic = true;
+        //_rb.isKinematic = true;
         _playerSprite.GetComponent<SpriteRenderer>().material = _playerMaterial;
     }
 
     #endregion
-
-    private void ApplyMovement() => _rb.velocity = _frameVelocity;
+    private Vector2 _knockbackForce;
+    private float _knockbackDuration;
+    private float _knockbackTimer;
+    private void ApplyMovement()
+    {
+        if (_knockbackTimer > 0)
+        {
+            // Durante o knockback, aplique a força de knockback
+            _rb.velocity = _knockbackForce;
+            _knockbackTimer -= Time.fixedDeltaTime;
+        }
+        else
+        {
+            // Movimento regular
+            _rb.velocity = _frameVelocity;
+        }
+    }
 
 }
+
 public interface IPlayerController
 {
     public event Action<bool, float> GroundedChanged;
-
     public event Action Jumped;
     public Vector2 FrameInput { get; }
 }
+
 public struct FrameInput
 {
     public bool JumpDown;

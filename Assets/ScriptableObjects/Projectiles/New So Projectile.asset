@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b41282ada14cd4c9ac66ff25e7e044, type: 3}
+  m_Name: New So Projectile
+  m_EditorClassIdentifier: 
+  ProjectileEffect: {fileID: 8312785408874701656, guid: e40af42adae824c43899d1a1dfac093c, type: 3}
+  Projectile: {fileID: 8312785408874701656, guid: e40af42adae824c43899d1a1dfac093c, type: 3}
+  ProjectileSpeed: 800
+  ProjectileLifeTime: 5

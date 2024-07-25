@@ -35,6 +35,7 @@ public class NetworkPlayer : MonoBehaviour
             foreach (var item in GetComponentsInChildren<SpriteRenderer>())
             {
                 item.enabled = false;
+
             }
         }
     }
