@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private FrameInput _frameInput;
     private Vector2 _frameVelocity;
     private bool _cachedQueryStartInColliders;
-
+    
     #region Interface
 
     public Vector2 FrameInput => _frameInput.Move;
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     #endregion
     private float _time;
-
+    private float _multiplierDamage;
     public GameObject Player => player;
 
     private Transform _playerSprite;
@@ -112,7 +112,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
         // Landed on the Ground
         if (!_grounded && groundHit)
         {
-            Debug.Log(groundHit);
             _grounded = true;
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
@@ -153,7 +152,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
         Gizmos.DrawLine(_col.bounds.center + Vector3.up * _stats.GrounderDistance + Vector3.right * (_col.size.x / 2),
                         _col.bounds.center + Vector3.up * (_stats.GrounderDistance + _col.size.y) + Vector3.right * (_col.size.x / 2));
     }
-
     #endregion
 
     #region Jumping
@@ -320,11 +318,14 @@ public class PlayerController : MonoBehaviour, IPlayerController
     [SerializeField]
     private Material damageMaterial;
 
-    public void ReceiveDamage(Vector3 knockUp)
+
+    public void ReceiveDamage(Vector3 knockUp, float damage)
     {
-        _knockbackForce = knockUp * 2; // Ajuste a força conforme necessário
+        _multiplierDamage += damage;
+        _knockbackForce = knockUp * _multiplierDamage; // Ajuste a força conforme necessário
         _knockbackDuration = 0.5f; // Duração do knockback em segundos
         _knockbackTimer = _knockbackDuration;
+        UIController.instance.UpdateHudPlayer(false, _multiplierDamage);
 
         _playerAnimator.CrossFade("Fall Animation", 0);
         StartCoroutine(ChangeSpriteMaterial());
@@ -341,8 +342,16 @@ public class PlayerController : MonoBehaviour, IPlayerController
         //_rb.isKinematic = true;
         _playerSprite.GetComponent<SpriteRenderer>().material = _playerMaterial;
     }
+    public void CountDeath()
+    {
+        UIController.instance.UpdateHudPlayer(true, 0);
+        //Ativar Evento De Ressurreição
+        GameController.instance.Ressurrection();
+    }
 
     #endregion
+
+
     private Vector2 _knockbackForce;
     private float _knockbackDuration;
     private float _knockbackTimer;

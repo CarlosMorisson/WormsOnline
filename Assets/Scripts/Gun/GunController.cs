@@ -12,13 +12,15 @@ public class GunController : MonoBehaviour, IGunController
     private Transform _playerHand;
     private Transform _playerGun;
     private float _fireRate;
+    private Animator _anim;
     [SerializeField]
     private SoGun _stats;
     void Start()
     {
         _player = GameObject.FindGameObjectWithTag("Player");
         _playerHand = GameObject.FindGameObjectWithTag("Hand").transform;
-        _playerGun = GameObject.FindGameObjectWithTag("Hand").GetComponentInChildren<Transform>();
+        _playerGun = _playerHand.gameObject.transform.GetChild(0).transform;
+        _anim = _playerGun.GetComponent<Animator>();
         _rotationSpeed = _stats.GunSpeedRotation;
         _fireRate = _stats.GunCoolDown;
     }
@@ -60,6 +62,7 @@ public class GunController : MonoBehaviour, IGunController
     }
     private void ExecuteRightShoot()
     {
+        _anim.SetTrigger("Shoot");
         PhotonNetwork.Instantiate("LeftProjectile", _playerGun.transform.position, _playerGun.transform.rotation);
         _rShoot = false;
         _rFireTimer = 0;
@@ -81,9 +84,11 @@ public class GunController : MonoBehaviour, IGunController
     }
     private void ExecuteLeftShoot()
     {
+        _anim.SetBool("Shoot", true);
         PhotonNetwork.Instantiate("LeftProjectile", _playerGun.transform.position, _playerGun.transform.rotation);
         _lShoot = false;
         _lFireTimer = 0;
+        _anim.CrossFadeInFixedTime("GunIdle", 0.1f);
     }
     #endregion
     #region MoveGunAroundThePlayer
@@ -99,8 +104,9 @@ public class GunController : MonoBehaviour, IGunController
         float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
         _playerHand.transform.rotation = Quaternion.Lerp(_playerHand.transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-        if (direction.x > 0 && !_isFacingRight || direction.x < 0 && _isFacingRight)
-            FlipGun();
+
+        //if (direction.x > 0 && !_isFacingRight || direction.x < 0 && _isFacingRight)
+          //  FlipGun();
     }
     private void FlipGun()
     {

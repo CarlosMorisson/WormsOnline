@@ -15,7 +15,8 @@ public class NetworkPlayer : MonoBehaviour
     [SerializeField]
     Animator PlayerAnim, ShootObjectAnim;
     //
-    private PhotonView _photonView;
+    [HideInInspector]
+    public PhotonView _photonView;
     //
     [Header("Clone Objects")]
     [Tooltip("The Objects that appear online")]
@@ -23,6 +24,11 @@ public class NetworkPlayer : MonoBehaviour
     Transform player, shadowPlayer, shootObject, weapon;
     [SerializeField]
     Animator cloneAnimator;
+    //
+    [Header("HudPlayer")]
+    [Tooltip("The UI reference for the enemies")]
+    [SerializeField]
+    public GameObject HudEnemy;
     void Start()
     {
         _photonView = GetComponent<PhotonView>();
@@ -37,6 +43,10 @@ public class NetworkPlayer : MonoBehaviour
                 item.enabled = false;
 
             }
+        }
+        else
+        {
+            HudEnemy=UIController.instance.CreateHudPlayer(gameObject.transform.GetChild(0).GetComponentInChildren<SpriteRenderer>().sprite, "Jorgito");
         }
     }
 

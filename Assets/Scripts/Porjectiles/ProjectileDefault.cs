@@ -14,6 +14,7 @@ public class ProjectileDefault : MonoBehaviour
     public float _speed;
     public GameObject parent;
     private PhotonView _photon;
+    private float _damage;
     public void Awake()
     {
         GetReferences();
@@ -22,14 +23,15 @@ public class ProjectileDefault : MonoBehaviour
         SetDirection();
         _photon = GetComponentInParent<PhotonView>();
     }
-    private void SetDirection()
+    public virtual void SetDirection()
     {
-        GetComponent<Rigidbody2D>().AddForce(transform.right * _speed);
+        GetComponent<Rigidbody2D>().AddForce(transform.up * _speed);
     }
 
     public void GetReferences()
     {
         _speed = _stats.ProjectileSpeed;
+        _damage = _stats.ProjectileDamage;
         _lifeTime = _stats.ProjectileLifeTime;
     }
     public virtual void OnTriggerEnter2D(Collider2D collision)
@@ -46,13 +48,22 @@ public class ProjectileDefault : MonoBehaviour
                 {
                     Vector2 knockbackDirection = collision.transform.position - transform.position;
                     knockbackDirection.Normalize();
-                    PlayerController.instance.ReceiveDamage(knockbackDirection.normalized);
+                    PlayerController.instance.ReceiveDamage(knockbackDirection.normalized, _damage);
                 }
                 StartCoroutine(DestroyObject(Effect));
                 Destroy(parent);
 
             }
-           
+
+        }
+        else
+        {
+            if (collision.gameObject.CompareTag("NetworkPlayer"))
+            {
+                UIController.instance.UpdateHudEnemy(false, _damage, collision.GetComponent<NetworkPlayer>().HudEnemy);
+                Destroy(parent);
+
+            }
         }
         if (collision.gameObject.CompareTag("Untagged"))
         {
@@ -64,10 +75,10 @@ public class ProjectileDefault : MonoBehaviour
             {
                 Vector2 knockbackDirection = collision.transform.position - transform.position;
                 knockbackDirection.Normalize();
-                PlayerController.instance.ReceiveDamage(knockbackDirection.normalized);
+                PlayerController.instance.ReceiveDamage(knockbackDirection.normalized, _damage);
             }
 
-            Destroy(parent);
+            //Destroy(parent);
         }
     }
     IEnumerator DestroyObject(GameObject ObjectToDestroy)

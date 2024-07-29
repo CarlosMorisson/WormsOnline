@@ -16,3 +16,4 @@ MonoBehaviour:
   Projectile: {fileID: 8312785408874701656, guid: e40af42adae824c43899d1a1dfac093c, type: 3}
   ProjectileSpeed: 800
   ProjectileLifeTime: 5
+  ProjectileDamage: 5

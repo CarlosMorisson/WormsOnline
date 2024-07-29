@@ -14,4 +14,6 @@ public class SoProjectile : ScriptableObject
     public float ProjectileSpeed;
     [Tooltip("The time before destroy the projectile after shoot")]
     public float ProjectileLifeTime;
+    [Tooltip("ProjectileDamage")]
+    public float ProjectileDamage;
 }
