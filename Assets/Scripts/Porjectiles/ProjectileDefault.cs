@@ -54,7 +54,12 @@ public class ProjectileDefault : MonoBehaviour
                 Destroy(parent);
 
             }
+            if (collision.gameObject.CompareTag("NetworkPlayer"))
+            {
+                UIController.instance.UpdateHudEnemy(false, _damage, collision.GetComponent<NetworkPlayer>().HudEnemy);
+                Destroy(parent);
 
+            }
         }
         else
         {

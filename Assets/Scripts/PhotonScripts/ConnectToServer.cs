@@ -4,15 +4,15 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class ConnectToServer : MonoBehaviourPunCallbacks
 {
     [SerializeField]
-    private Canvas _canvasServer;
-    [SerializeField]
-    private TMP_InputField _createInput, _joinInput;
+    private TMP_InputField _createInput, _joinInput, _nameInput;
     [SerializeField] 
-    private GameObject spawnedPlayerPrefab;
+    private GameObject spawnedPlayerPrefab, _canvasServer;
+    private Button _joinButton, _createButton;
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -20,13 +20,25 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
         {
             Destroy(gameObject);
         }
+        GetMenuReferences();
     }
 
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
     }
+    private void Update()
+    {
+        if (_nameInput.text.Length < 1 && _createInput.text.Length < 1)
+            _createButton.interactable = false;
+        else
+            _createButton.interactable = true;
 
+        if (_nameInput.text.Length < 1 && _joinInput.text.Length < 1)
+            _joinButton.interactable = false;
+        else
+            _joinButton.interactable = true;
+    }
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby();
@@ -34,9 +46,34 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        _canvasServer.gameObject.SetActive(true);
+        _canvasServer.SetActive(true);
     }
+    public void LeaveRoom()
+    {
+        SceneManager.LoadScene("MenuGame");
+        PhotonNetwork.LeaveRoom();
+        StartCoroutine(CheckScene());
+    }
+    public IEnumerator CheckScene()
+    {
+        while (SceneManager.GetActiveScene().name != "MenuGame")
+        {
+            yield return null;
+        }
+        GetMenuReferences();
+    }
+    public void GetMenuReferences()
+    {
+        _canvasServer = GameObject.FindGameObjectWithTag("JoinRoom");
+        _joinInput = _canvasServer.transform.GetChild(0).GetComponent<TMP_InputField>();
+        _createInput = _canvasServer.transform.GetChild(1).GetComponent<TMP_InputField>();
+        _nameInput = GameObject.FindGameObjectWithTag("GameName").GetComponent<TMP_InputField>();
+        _createButton = _createInput.transform.GetChild(2).GetComponent<Button>();
+        _createButton.onClick.AddListener(() => CreateRoom());
+        _joinButton = _joinInput.transform.GetChild(2).GetComponent<Button>();
+        _joinButton.onClick.AddListener(()=>JoinRoom());
 
+    }
     public void CreateRoom()
     {
         PhotonNetwork.CreateRoom(_createInput.text);
@@ -50,6 +87,7 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        PhotonNetwork.NickName = _nameInput.text;
         PhotonNetwork.LoadLevel("SampleScene");
 
         base.OnJoinedRoom();

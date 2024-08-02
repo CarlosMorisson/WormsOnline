@@ -20,7 +20,6 @@ public class DeathObject : MonoBehaviour
             }
             else
             {
-                Debug.Log("Colidiu");
                 UIController.instance.UpdateHudEnemy(true, 0, network.HudEnemy);
                
             }

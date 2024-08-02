@@ -4,7 +4,8 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
-public class UIController : MonoBehaviour
+using Photon.Pun;
+public class UIController : MonoBehaviourPunCallbacks
 {
     public static UIController instance;
     [SerializeField]
@@ -14,7 +15,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     public TextMeshProUGUI Cronometer;
     [SerializeField]
-    GameObject GameOver;
+    GameObject GameOver,CanvaHud;
     [HideInInspector]
     public int _enemyPlayerHudIndex;
 
@@ -25,7 +26,46 @@ public class UIController : MonoBehaviour
     }
     public void ShowGameOver()
     {
+        if (CheckWinner())
+            Debug.Log("DeuCerto");
+        else
+            Debug.Log("NaoDeuCerto");
+        CanvaHud.SetActive(false);
+        GameOver.SetActive(true);
+    }
+    private bool CheckWinner()
+    {
+        int maxEnemyDeaths = 0;
+        bool hasWinner = false;
+        bool isTie = false;
 
+        foreach (var enemyHud in EnemyPlayerHud)
+        {
+            TextMeshProUGUI deathNumEnemy = enemyHud.transform.GetChild(0).GetChild(2).GetComponentInChildren<TextMeshProUGUI>();
+            int enemyDeaths = int.Parse(deathNumEnemy.text);
+            Debug.Log("entrou no foreach");
+            if (enemyDeaths > maxEnemyDeaths)
+            {
+                maxEnemyDeaths = enemyDeaths;
+                hasWinner = false; // Reseta a condição de empate
+                isTie = false;
+            }
+            else if (enemyDeaths == maxEnemyDeaths)
+            {
+                isTie = true; // Marque como empate se encontrar um valor igual
+            }
+        }
+
+        if (_numPlayerDeath > maxEnemyDeaths)
+        {
+            hasWinner = true;
+        }
+        else if (_numPlayerDeath == maxEnemyDeaths && !isTie)
+        {
+            hasWinner = false;
+        }
+
+        return hasWinner;
     }
     // Update is called once per frame
     void Update()
@@ -81,6 +121,7 @@ public class UIController : MonoBehaviour
     void GetPlayerReferenceHud()
     {
         _playerName = PlayerHud.transform.GetChild(0).GetChild(3).GetComponentInChildren<TextMeshProUGUI>();
+        _playerName.text = PhotonNetwork.NickName;
         _playerSplashArt = PlayerHud.transform.GetChild(0).GetChild(0).GetComponentInChildren<Image>();
         _damagePercentagePlayer = PlayerHud.transform.GetChild(0).GetChild(1).GetComponentInChildren<TextMeshProUGUI>();
         _deathNumPlayer = PlayerHud.transform.GetChild(0).GetChild(2).GetComponentInChildren<TextMeshProUGUI>();

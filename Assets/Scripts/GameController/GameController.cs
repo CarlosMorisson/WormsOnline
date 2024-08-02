@@ -23,7 +23,7 @@ public class GameController : MonoBehaviourPunCallbacks, IPunObservable
     }
     private void UpdateTimer()
     {
-        if (TimeInSeconds > 0)
+        if (TimeInSeconds > 1)
         {
             TimeInSeconds -= 1f;
             DisplayTime(TimeInSeconds);
@@ -31,11 +31,17 @@ public class GameController : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             TimeInSeconds = 0;
-            GameOver();
+            UIController.instance.ShowGameOver();
             CancelInvoke("UpdateTimer");
         }
 
        
+    }
+    public void LeaveGame()
+    {
+        ConnectToServer server;
+        server = FindObjectOfType<ConnectToServer>();
+        server.LeaveRoom();
     }
     void DisplayTime(float timeToDisplay)
     {
@@ -50,9 +56,12 @@ public class GameController : MonoBehaviourPunCallbacks, IPunObservable
         else
             TimeInSeconds = (float)stream.ReceiveNext();
         DisplayTime(TimeInSeconds);
-    }
-    private void GameOver()
-    {
+        if(TimeInSeconds<1)
+        {
+            UIController.instance.ShowGameOver();
+            TimeInSeconds = 10;
+        }
+            
     }
     public void Ressurrection()
     {

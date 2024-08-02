@@ -46,11 +46,15 @@ public class NetworkPlayer : MonoBehaviour
         }
         else
         {
-            HudEnemy=UIController.instance.CreateHudPlayer(gameObject.transform.GetChild(0).GetComponentInChildren<SpriteRenderer>().sprite, "Jorgito");
+            HudEnemy=UIController.instance.CreateHudPlayer(gameObject.transform.GetChild(0).GetComponentInChildren<SpriteRenderer>().sprite, _photonView.Owner.NickName);
             UIController.instance._enemyPlayerHudIndex++;
         }
     }
-
+    private void OnDestroy()
+    {
+        if (_photonView.IsMine==false)
+            HudEnemy.SetActive(false);
+    }
     void Update()
     {
         if (_photonView.IsMine)

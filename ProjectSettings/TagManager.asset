@@ -10,6 +10,11 @@ TagManager:
   - NetworkPlayer
   - RessurrectionPoint
   - Death
+  - GameOverCanva
+  - WinnerCanva
+  - TieCanva
+  - JoinRoom
+  - GameName
   layers:
   - Default
   - TransparentFX
