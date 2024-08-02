@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-public class GameController : MonoBehaviour
+using Photon.Pun;
+public class GameController : MonoBehaviourPunCallbacks, IPunObservable
 {
     public static GameController instance;
     [SerializeField]
@@ -15,13 +16,43 @@ public class GameController : MonoBehaviour
     void Start()
     {
         instance = this;
-
+        if (PhotonNetwork.IsMasterClient)
+        {
+            InvokeRepeating("UpdateTimer", 0f, 1f);
+        }
     }
-
-    // Update is called once per frame
-    void Update()
+    private void UpdateTimer()
     {
-        
+        if (TimeInSeconds > 0)
+        {
+            TimeInSeconds -= 1f;
+            DisplayTime(TimeInSeconds);
+        }
+        else
+        {
+            TimeInSeconds = 0;
+            GameOver();
+            CancelInvoke("UpdateTimer");
+        }
+
+       
+    }
+    void DisplayTime(float timeToDisplay)
+    {
+        int minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        int seconds = Mathf.FloorToInt(timeToDisplay % 60);
+        UIController.instance.Cronometer.text = string.Format("{0:0}:{1:00}", minutes, seconds);
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+            stream.SendNext(TimeInSeconds);
+        else
+            TimeInSeconds = (float)stream.ReceiveNext();
+        DisplayTime(TimeInSeconds);
+    }
+    private void GameOver()
+    {
     }
     public void Ressurrection()
     {

@@ -11,14 +11,22 @@ public class UIController : MonoBehaviour
     GameObject PlayerHud;
     [SerializeField]
     GameObject[] EnemyPlayerHud;
-    private int _enemyPlayerHudIndex;
+    [SerializeField]
+    public TextMeshProUGUI Cronometer;
+    [SerializeField]
+    GameObject GameOver;
+    [HideInInspector]
+    public int _enemyPlayerHudIndex;
 
     void Start()
     {
         instance = this;
         GetPlayerReferenceHud();
     }
+    public void ShowGameOver()
+    {
 
+    }
     // Update is called once per frame
     void Update()
     {
@@ -34,7 +42,6 @@ public class UIController : MonoBehaviour
         _enemyName.text = enemyName;
         EnemyPlayerHud[_enemyPlayerHudIndex].transform.GetChild(0).GetChild(3).GetComponentInChildren<TextMeshProUGUI>().text = _enemyName.text;
         return EnemyPlayerHud[_enemyPlayerHudIndex];
-        _enemyPlayerHudIndex++;
     }
     private TextMeshProUGUI _enemyName;
     private Image _enemySplashArt;
@@ -54,11 +61,9 @@ public class UIController : MonoBehaviour
         _newDamage += actualizeDamage;
         if (isDead)
         {
-            Debug.Log("Entrou no if");
             _numEnemyDeath++;
             _deathNumEnemy.text = _numEnemyDeath.ToString();
             _damagePercentageEnemy.text = actualizeDamage.ToString() + "%";
-            Debug.Log("Executou ate o fim");
         }
         else
         {
