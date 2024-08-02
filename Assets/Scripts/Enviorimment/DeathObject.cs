@@ -19,7 +19,8 @@ public class DeathObject : MonoBehaviour
                 PlayerController.instance.CountDeath();
             }
             else
-            { 
+            {
+                Debug.Log("Colidiu");
                 UIController.instance.UpdateHudEnemy(true, 0, network.HudEnemy);
                
             }
