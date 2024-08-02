@@ -47,6 +47,7 @@ public class NetworkPlayer : MonoBehaviour
         else
         {
             HudEnemy=UIController.instance.CreateHudPlayer(gameObject.transform.GetChild(0).GetComponentInChildren<SpriteRenderer>().sprite, "Jorgito");
+            UIController.instance._enemyPlayerHudIndex++;
         }
     }
 
