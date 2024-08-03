@@ -438,8 +438,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ce9f8a90043cb49b11cec443b712e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxEffect: {x: -0.005, y: 0}
-  infiniteHorizontal: 1
+  parallaxEffect: {x: -0.5, y: 0}
+  infiniteHorizontal: 0
   infiniteVertical: 0
 --- !u!212 &14393704
 SpriteRenderer:
@@ -2523,8 +2523,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ce9f8a90043cb49b11cec443b712e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxEffect: {x: -0.03, y: 0}
-  infiniteHorizontal: 1
+  parallaxEffect: {x: -0.3, y: 0}
+  infiniteHorizontal: 0
   infiniteVertical: 0
 --- !u!212 &525532457
 SpriteRenderer:
@@ -2758,8 +2758,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ce9f8a90043cb49b11cec443b712e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxEffect: {x: -0.01, y: 0}
-  infiniteHorizontal: 1
+  parallaxEffect: {x: -0.4, y: 0}
+  infiniteHorizontal: 0
   infiniteVertical: 0
 --- !u!212 &599128207
 SpriteRenderer:
@@ -3555,8 +3555,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ce9f8a90043cb49b11cec443b712e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxEffect: {x: -0.002, y: 0}
-  infiniteHorizontal: 1
+  parallaxEffect: {x: -0.6, y: 0}
+  infiniteHorizontal: 0
   infiniteVertical: 0
 --- !u!212 &864756733
 SpriteRenderer:
@@ -3833,8 +3833,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ce9f8a90043cb49b11cec443b712e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxEffect: {x: -0.001, y: 0}
-  infiniteHorizontal: 1
+  parallaxEffect: {x: -0.7, y: 0}
+  infiniteHorizontal: 0
   infiniteVertical: 0
 --- !u!212 &993543011
 SpriteRenderer:
@@ -27279,7 +27279,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1370245605}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 22.393, y: -3, z: 0}
+  m_LocalPosition: {x: 22.393, y: -0.5999999, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27298,8 +27298,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ce9f8a90043cb49b11cec443b712e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxEffect: {x: -0.05, y: 0}
-  infiniteHorizontal: 1
+  parallaxEffect: {x: -0.2, y: 0}
+  infiniteHorizontal: 0
   infiniteVertical: 0
 --- !u!212 &1370245608
 SpriteRenderer:
@@ -28574,7 +28574,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1745447055}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 22.393, y: -3, z: 0}
+  m_LocalPosition: {x: 22.393, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28593,8 +28593,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ce9f8a90043cb49b11cec443b712e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxEffect: {x: -0.08, y: 0}
-  infiniteHorizontal: 1
+  parallaxEffect: {x: -0.1, y: 0}
+  infiniteHorizontal: 0
   infiniteVertical: 0
 --- !u!212 &1745447058
 SpriteRenderer:

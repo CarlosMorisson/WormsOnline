@@ -11,16 +11,16 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
     [SerializeField]
     private TMP_InputField _createInput, _joinInput, _nameInput;
     [SerializeField] 
-    private GameObject spawnedPlayerPrefab, _canvasServer;
+    private GameObject spawnedPlayerPrefab, _canvasServer, _canvas;
     private Button _joinButton, _createButton;
     private void Awake()
     {
+        GetMenuReferences();
         DontDestroyOnLoad(gameObject);
         if (FindObjectsOfType<ConnectToServer>().Length > 1)
         {
             Destroy(gameObject);
         }
-        GetMenuReferences();
     }
 
     void Start()
@@ -46,7 +46,8 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        _canvasServer.SetActive(true);
+        _canvas = GameObject.FindGameObjectWithTag("GameController");
+        _canvas.SetActive(true);
     }
     public void LeaveRoom()
     {
@@ -69,8 +70,8 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
         _createInput = _canvasServer.transform.GetChild(1).GetComponent<TMP_InputField>();
         _nameInput = GameObject.FindGameObjectWithTag("GameName").GetComponent<TMP_InputField>();
         _createButton = _createInput.transform.GetChild(2).GetComponent<Button>();
-        _createButton.onClick.AddListener(() => CreateRoom());
         _joinButton = _joinInput.transform.GetChild(2).GetComponent<Button>();
+        _createButton.onClick.AddListener(() => CreateRoom());
         _joinButton.onClick.AddListener(()=>JoinRoom());
 
     }

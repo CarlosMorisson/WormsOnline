@@ -4,7 +4,6 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
-using Photon.Pun;
 public class UIController : MonoBehaviourPunCallbacks
 {
     public static UIController instance;
