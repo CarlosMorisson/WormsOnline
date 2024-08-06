@@ -7,69 +7,129 @@ using TMPro;
 public class UIController : MonoBehaviourPunCallbacks
 {
     public static UIController instance;
+    [Header("HUD")]
     [SerializeField]
     GameObject PlayerHud;
     [SerializeField]
     GameObject[] EnemyPlayerHud;
     [SerializeField]
-    public TextMeshProUGUI Cronometer;
+    GameObject CanvaHud;
+    [Header("UI")]
     [SerializeField]
-    GameObject GameOver,CanvaHud;
+    public TextMeshProUGUI Cronometer;
+    [Header("GameOver")]
+    [SerializeField]
+    GameObject GameOver;
     [HideInInspector]
     public int _enemyPlayerHudIndex;
+    private TextMeshProUGUI _gameOverText;
+    #region WinnerCanva
+    [SerializeField]
+    private GameObject _winnerCanva;
+    private TextMeshProUGUI _winnerName;
+    private Image _winnerImage;
+    #endregion
+    #region TieCanva
+    [SerializeField]
+    private GameObject _tieCanva;
 
+    #endregion
     void Start()
     {
         instance = this;
         GetPlayerReferenceHud();
+        _winnerImage = _winnerCanva.transform.GetChild(0).GetComponent<Image>();
+        _winnerName = _winnerCanva.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
     }
     public void ShowGameOver()
     {
-        if (CheckWinner())
-            Debug.Log("DeuCerto");
-        else
-            Debug.Log("NaoDeuCerto");
-        CanvaHud.SetActive(false);
+
         GameOver.SetActive(true);
+        _gameOverText = GameOver.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        if (CheckWinner())
+            ShowWinnerCanva();
+        else
+            ShowLoseCanva();
+        CanvaHud.SetActive(false);
+    }
+    private void ShowWinnerCanva()
+    {
+        _winnerCanva.SetActive(true);
+        _gameOverText.text = "We have a Winner";
+        //_winnerName = ;
+
+    }
+    private void ShowLoseCanva()
+    {
+        _winnerCanva.SetActive(false);
+        _tieCanva.SetActive(true);
+        _gameOverText.text = "FriendShip";
     }
     private bool CheckWinner()
     {
-        int maxEnemyDeaths = 0;
-        bool hasWinner = false;
+        int minEnemyDeaths = int.MaxValue;
+        int numPlayersWithMinDeaths = 0;
         bool isTie = false;
+        bool hasWinner = false;
 
+        // Verifica o menor número de mortes entre os inimigos
         foreach (var enemyHud in EnemyPlayerHud)
         {
-            TextMeshProUGUI deathNumEnemy = enemyHud.transform.GetChild(0).GetChild(2).GetComponentInChildren<TextMeshProUGUI>();
-            int enemyDeaths = int.Parse(deathNumEnemy.text);
-            Debug.Log("entrou no foreach");
-            if (enemyDeaths > maxEnemyDeaths)
+            if (enemyHud.active)
             {
-                maxEnemyDeaths = enemyDeaths;
-                hasWinner = false; // Reseta a condição de empate
-                isTie = false;
+                TextMeshProUGUI deathNumEnemy = enemyHud.transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
+                int enemyDeaths = int.Parse(deathNumEnemy.text);
+                Debug.Log("Loucura");
+                if (enemyDeaths < minEnemyDeaths)
+                {
+                    minEnemyDeaths = enemyDeaths;
+                    numPlayersWithMinDeaths = 0; // Reseta a contagem se encontrar um menor valor
+                    isTie = false; // Reseta o empate
+                    _winnerCanva.SetActive(true);
+                    _winnerName.text = enemyHud.transform.GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text;
+                    _winnerImage.sprite = enemyHud.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite;
+                }
+                else if (enemyDeaths == minEnemyDeaths)
+                {
+                    numPlayersWithMinDeaths++;
+                    isTie = true; // Marca empate se encontrar outro com o mesmo número de mortes
+                }
+                else
+                {
+                    isTie = false; // Se encontrar um número maior, não há empate
+                }
+                
             }
-            else if (enemyDeaths == maxEnemyDeaths)
-            {
-                isTie = true; // Marque como empate se encontrar um valor igual
-            }
-        }
 
-        if (_numPlayerDeath > maxEnemyDeaths)
-        {
-            hasWinner = true;
         }
-        else if (_numPlayerDeath == maxEnemyDeaths && !isTie)
+        if (isTie)
         {
-            hasWinner = false;
+            Debug.Log("O jogo terminou em empate.");
+            return false;
+        }
+        if (_numPlayerDeath < minEnemyDeaths)
+        {
+            Debug.Log("Tem um vencedor");
+            hasWinner = true;
+            _winnerName.text = PlayerHud.transform.GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>().text;
+            _winnerImage.sprite = PlayerHud.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite;
+        }
+        else if (_numPlayerDeath == minEnemyDeaths)
+        {
+            // Se o jogador tem o mesmo número de mortes que o menor dos inimigos, é empate
+            Debug.Log("O jogo terminou em empate.");
+            return false;
         }
 
         return hasWinner;
     }
+
     // Update is called once per frame
     void Update()
     {
-        
+        if (Cronometer.text == "0:00")
+            ShowGameOver();
+
     }
     #region EnemyHud
     public GameObject CreateHudPlayer(Sprite enemySprite, string enemyName)
@@ -130,7 +190,7 @@ public class UIController : MonoBehaviourPunCallbacks
         if (isDead)
         {
             _numPlayerDeath++;
-            _deathNumPlayer.text= _numPlayerDeath.ToString();
+            _deathNumPlayer.text = _numPlayerDeath.ToString();
             _damagePercentagePlayer.text = actualizeDamage.ToString() + "%";
         }
         else
