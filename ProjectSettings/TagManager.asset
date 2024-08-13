@@ -15,6 +15,7 @@ TagManager:
   - TieCanva
   - JoinRoom
   - GameName
+  - StartGameCanva
   layers:
   - Default
   - TransparentFX

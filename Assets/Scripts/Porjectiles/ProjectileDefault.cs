@@ -51,13 +51,13 @@ public class ProjectileDefault : MonoBehaviour
                     PlayerController.instance.ReceiveDamage(knockbackDirection.normalized, _damage);
                 }
                 StartCoroutine(DestroyObject(Effect));
-                Destroy(parent);
+                DestroyObject(parent);
 
             }
             if (collision.gameObject.CompareTag("NetworkPlayer"))
             {
                 UIController.instance.UpdateHudEnemy(false, _damage, collision.GetComponent<NetworkPlayer>().HudEnemy);
-                Destroy(parent);
+                DestroyObject(parent);
 
             }
         }
@@ -66,7 +66,7 @@ public class ProjectileDefault : MonoBehaviour
             if (collision.gameObject.CompareTag("NetworkPlayer"))
             {
                 UIController.instance.UpdateHudEnemy(false, _damage, collision.GetComponent<NetworkPlayer>().HudEnemy);
-                Destroy(parent);
+                DestroyObject(parent);
 
             }
         }
@@ -74,7 +74,7 @@ public class ProjectileDefault : MonoBehaviour
         {
             GameObject Effect = PhotonNetwork.Instantiate("Particle", collision.transform.position, collision.transform.rotation);
 
-            Destroy(Effect, .25f);
+            DestroyObject(Effect);
             Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
             if (rb != null)
             {

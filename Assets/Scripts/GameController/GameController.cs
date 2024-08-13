@@ -12,14 +12,13 @@ public class GameController : MonoBehaviourPunCallbacks, IPunObservable
     Transform ressurrectionPoint;
     [SerializeField]
     GameObject ressurrectionPlataform;
-
+    private bool _readyToPlay;
+    [SerializeField]
+    int numberOfReadyPlayer;
     void Start()
     {
         instance = this;
-        if (PhotonNetwork.IsMasterClient)
-        {
-            InvokeRepeating("UpdateTimer", 0f, 1f);
-        }
+
     }
     private void UpdateTimer()
     {
@@ -51,10 +50,42 @@ public class GameController : MonoBehaviourPunCallbacks, IPunObservable
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
+        {
             stream.SendNext(TimeInSeconds);
+            stream.SendNext(numberOfReadyPlayer);
+        }
         else
-            TimeInSeconds = (float)stream.ReceiveNext();    
-        DisplayTime(TimeInSeconds);
+        {
+            TimeInSeconds = (float)stream.ReceiveNext();
+            numberOfReadyPlayer = (int)stream.ReceiveNext();
+        }
+            
+        if (PhotonNetwork.IsMasterClient==false)
+        {
+            DisplayTime(TimeInSeconds);
+        }
+    }
+    public void ReadyToPlay()
+    {
+        _readyToPlay = !_readyToPlay;
+        photonView.RPC("UpdateReadyPlayers", RpcTarget.All, _readyToPlay);
+    }
+
+    [PunRPC]
+    void UpdateReadyPlayers(bool playerReady)
+    {
+        if (playerReady)
+            numberOfReadyPlayer++;
+        else
+            numberOfReadyPlayer--;
+
+        UIController.instance.readyPlayerText.text = numberOfReadyPlayer.ToString();
+        if (PhotonNetwork.PlayerList.Length == numberOfReadyPlayer)
+        {
+            UIController.instance._startCanva.SetActive(false);
+            if (PhotonNetwork.IsMasterClient)
+                InvokeRepeating("UpdateTimer", 0f, 1f);
+        }
     }
     public void Ressurrection()
     {

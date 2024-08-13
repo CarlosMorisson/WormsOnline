@@ -23,6 +23,12 @@ public class UIController : MonoBehaviourPunCallbacks
     [HideInInspector]
     public int _enemyPlayerHudIndex;
     private TextMeshProUGUI _gameOverText;
+    [Header("StartGame")]
+    [SerializeField]
+    private Sprite ReadySprite, UnreadySprite;
+    [HideInInspector]
+    public GameObject _startCanva;
+    public TextMeshProUGUI readyPlayerText;
     #region WinnerCanva
     [SerializeField]
     private GameObject _winnerCanva;
@@ -40,7 +46,10 @@ public class UIController : MonoBehaviourPunCallbacks
         GetPlayerReferenceHud();
         _winnerImage = _winnerCanva.transform.GetChild(0).GetComponent<Image>();
         _winnerName = _winnerCanva.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        _startCanva = GameObject.FindGameObjectWithTag("StartGameCanva");
+
     }
+    #region GameOverCanva
     public void ShowGameOver()
     {
 
@@ -123,14 +132,29 @@ public class UIController : MonoBehaviourPunCallbacks
 
         return hasWinner;
     }
-
+    #endregion
     // Update is called once per frame
     void Update()
     {
         if (Cronometer.text == "0:00")
+        {
             ShowGameOver();
+            Cronometer.text = "";
+        }
+            
 
     }
+    #region StartCanva
+    bool _readyPlayer;
+    public void ReadyPlayer(Button button)
+    {
+        _readyPlayer = !_readyPlayer;
+        if (_readyPlayer)
+            button.image.sprite = ReadySprite;
+        else
+            button.image.sprite = UnreadySprite;
+    }
+    #endregion
     #region EnemyHud
     public GameObject CreateHudPlayer(Sprite enemySprite, string enemyName)
     {
